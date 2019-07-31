@@ -9,7 +9,7 @@ const serializeNotes = note => ({
   id: note.id,
   name: note.notes_name,
   dateModified: note.date_modified,
-  noteId: note.note_id,
+  folderId: note.folder_id,
   content: note.content
 });
 
@@ -22,8 +22,8 @@ NotesRouter.route('/')
       .catch(next);
   })
   .post(jsonParser, (req, res, next) => {
-    const { notesName, noteId, content } = req.body;
-    const newNote = { notesName, noteId, content };
+    const { name, folderId, content } = req.body;
+    const newNote = { name, folderId, content };
 
     for (const [key, value] of Object.entries(newNote)) {
       if (value == null) {
@@ -69,8 +69,8 @@ NotesRouter.route('/:note_id')
   })
 
   .patch(jsonParser, (req, res, next) => {
-    const { notesName, noteId, content  } = req.body;
-    const noteToUpdate = { notesName, noteId, content  };
+    const { name, folderId, content   } = req.body;
+    const noteToUpdate = { name, folderId, content   };
 
     const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length;
     if (numberOfValues === 0) {
@@ -87,27 +87,4 @@ NotesRouter.route('/:note_id')
       })
       .catch(next);
   });
-
-/*NotesRouter.route('/:folder_id/notes')
-  .all((req, res, next) => {
-    NotesService.getById(req.app.get('db'), req.params.note_id)
-      .then(note => {
-        if (!note) {
-          return res.status(404).json({
-            error: { message: `Note doesn't exist` }
-          });
-        }
-        res.note = note; // save the article for the next middleware
-        next(); // don't forget to call next so the next middleware happens!
-      })
-      .catch(next);
-  })
-  .get((req, res, next) => {
-    NotesService.getByFolder(req.app.get('db'), req.params.folder_id)
-    .then(numRowsAffected => {
-      res.status(204).end();
-    })
-    .catch(next);
-  });*/
-
 module.exports = NotesRouter;
